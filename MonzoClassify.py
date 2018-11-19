@@ -141,6 +141,7 @@ class MonzoClassify():
         dates = []
         descs = []
         amounts = []
+        curr = []
 
         for line in lines[4:]:
 
@@ -151,21 +152,43 @@ class MonzoClassify():
             splitted = line.split(":")
 
             category = splitted[0]
+            #Everything before the first : is define as a category
+
             data = ":".join(splitted[1:])
+            # Everything after the first : is defined as data
 
             if category == 'Date':
                 dates.append(data.strip())
             elif category == 'Description':
+                data_split=data.split()
+                #Split description into a list of words
+
+                currency=data_split[-1]
+                #Take last word as currency
+
+                del data_split[-1]
+                #Remove currency from the list
+
+                data = data_split[0:]
+                #Take the remaining list as description
+                data = " ".join(data)
+                #Rejoin new list into single string
+
                 descs.append(data.strip())
+                #Add string to the description field in pandas
+
+                curr.append(currency.strip())
+                #Add currency string to the currency field in pandas
             elif category == 'Amount':
                 just_numbers = re.sub("[^0-9\.-]", "", data)
                 amounts.append(just_numbers.strip())
 
-        df = pd.DataFrame({'date':dates, 'desc':descs, 'amount':amounts})
+        df = pd.DataFrame({'date':dates, 'desc':descs, 'amount':amounts, 'currency':curr})
 
         df['amount'] = df.amount.astype(float)
         df['desc'] = df.desc.astype(str)
         df['date'] = df.date.astype(str)
+        df['currency'] = df.currency.astype(str)
 
         return df
 
