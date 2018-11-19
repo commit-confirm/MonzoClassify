@@ -162,23 +162,29 @@ class MonzoClassify():
             elif category == 'Description':
                 data_split=data.split()
                 #Split description into a list of words
+                if len(data_split[-1]) == 3:
+                    currency=data_split[-1]
+                    #Take last word as currency
+                    del data_split[-1]
+                    #Remove currency from the list
+                    data = data_split[0:]
+                    #Take the remaining list as description
+                    data = " ".join(data)
+                    #Rejoin new list into single string
+                    descs.append(data.strip())
+                    #Add string to the description field in pandas
+                    curr.append(currency.strip())
+                    #Add currency string to the currency field in pandas
+                else:
+                    #currency = "NaN"
+                    curr.append('NaN')
+                    data = data_split[0:]
+                    #Take the remaining list as description
+                    data = " ".join(data)
+                    #Rejoin new list into single string
+                    descs.append(data.strip())
+                    #Add string to the description field in pandas
 
-                currency=data_split[-1]
-                #Take last word as currency
-
-                del data_split[-1]
-                #Remove currency from the list
-
-                data = data_split[0:]
-                #Take the remaining list as description
-                data = " ".join(data)
-                #Rejoin new list into single string
-
-                descs.append(data.strip())
-                #Add string to the description field in pandas
-
-                curr.append(currency.strip())
-                #Add currency string to the currency field in pandas
             elif category == 'Amount':
                 just_numbers = re.sub("[^0-9\.-]", "", data)
                 amounts.append(just_numbers.strip())
