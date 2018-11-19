@@ -1,1 +1,4 @@
 ignored
+*.csv
+*.txt
+*__
